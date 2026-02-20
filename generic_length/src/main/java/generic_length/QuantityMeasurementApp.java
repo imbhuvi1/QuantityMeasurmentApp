@@ -4,14 +4,45 @@ package generic_length;
 public class QuantityMeasurementApp {
 
     /* ===========================
-       FEET CLASS
+       STEP 1: ENUM FOR UNITS
+       Base Unit: FEET
     =========================== */
-    public static class Feet {
+    public enum LengthUnit {
+
+        FEET(1.0),
+        INCH(1.0 / 12.0);
+
+        private final double conversionFactorToFeet;
+
+        LengthUnit(double conversionFactorToFeet) {
+            this.conversionFactorToFeet = conversionFactorToFeet;
+        }
+
+        public double toFeet(double value) {
+            return value * conversionFactorToFeet;
+        }
+    }
+
+    /* ===========================
+       STEP 2: GENERIC QUANTITY CLASS
+    =========================== */
+    public static class QuantityLength {
 
         private final double value;
+        private final LengthUnit unit;
 
-        public Feet(double value) {
+        public QuantityLength(double value, LengthUnit unit) {
+
+            if (unit == null) {
+                throw new IllegalArgumentException("Unit cannot be null");
+            }
+
             this.value = value;
+            this.unit = unit;
+        }
+
+        private double convertToBaseUnit() {
+            return unit.toFeet(value);
         }
 
         @Override
@@ -22,51 +53,13 @@ public class QuantityMeasurementApp {
             if (obj == null || getClass() != obj.getClass())
                 return false;
 
-            Feet feet = (Feet) obj;
+            QuantityLength other = (QuantityLength) obj;
 
-            return Double.compare(this.value, feet.value) == 0;
+            return Double.compare(
+                    this.convertToBaseUnit(),
+                    other.convertToBaseUnit()
+            ) == 0;
         }
-    }
-
-    /* ===========================
-       INCHES CLASS
-    =========================== */
-    public static class Inches {
-
-        private final double value;
-
-        public Inches(double value) {
-            this.value = value;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-
-            if (this == obj) return true;
-
-            if (obj == null || getClass() != obj.getClass())
-                return false;
-
-            Inches inches = (Inches) obj;
-
-            return Double.compare(this.value, inches.value) == 0;
-        }
-    }
-
-    /* ===========================
-       STATIC VALIDATION METHODS
-    =========================== */
-
-    public static boolean compareFeet(double value1, double value2) {
-        Feet feet1 = new Feet(value1);
-        Feet feet2 = new Feet(value2);
-        return feet1.equals(feet2);
-    }
-
-    public static boolean compareInches(double value1, double value2) {
-        Inches inch1 = new Inches(value1);
-        Inches inch2 = new Inches(value2);
-        return inch1.equals(inch2);
     }
 
     /* ===========================
@@ -74,13 +67,22 @@ public class QuantityMeasurementApp {
     =========================== */
     public static void main(String[] args) {
 
-        boolean inchResult = compareInches(1.0, 1.0);
-        boolean feetResult = compareFeet(1.0, 1.0);
+        QuantityLength q1 =
+                new QuantityLength(1.0, LengthUnit.FEET);
 
-        System.out.println("Input: 1.0 inch and 1.0 inch");
-        System.out.println("Output: Equal (" + inchResult + ")");
+        QuantityLength q2 =
+                new QuantityLength(12.0, LengthUnit.INCH);
 
-        System.out.println("Input: 1.0 ft and 1.0 ft");
-        System.out.println("Output: Equal (" + feetResult + ")");
+        System.out.println("Input: Quantity(1.0, FEET) and Quantity(12.0, INCH)");
+        System.out.println("Output: Equal (" + q1.equals(q2) + ")");
+
+        QuantityLength q3 =
+                new QuantityLength(1.0, LengthUnit.INCH);
+
+        QuantityLength q4 =
+                new QuantityLength(1.0, LengthUnit.INCH);
+
+        System.out.println("Input: Quantity(1.0, INCH) and Quantity(1.0, INCH)");
+        System.out.println("Output: Equal (" + q3.equals(q4) + ")");
     }
 }
