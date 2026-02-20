@@ -1,7 +1,10 @@
-package inch_equality;
+package generic_length;
 
 
 import org.junit.jupiter.api.Test;
+
+import generic_length.QuantityMeasurementApp;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class QuantityMeasurementAppTest {

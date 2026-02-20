@@ -1,4 +1,4 @@
-package inch_equality;
+package generic_length;
 
 
 public class QuantityMeasurementApp {
