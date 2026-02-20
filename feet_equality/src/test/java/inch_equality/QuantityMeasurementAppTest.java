@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class QuantityMeasurementAppTest {
 
-    //FEET TEST CASES
+    // FEET TEST CASES
     @Test
     void testEquality_SameValue_Feet() {
         assertTrue(QuantityMeasurementApp.compareFeet(1.0, 1.0));

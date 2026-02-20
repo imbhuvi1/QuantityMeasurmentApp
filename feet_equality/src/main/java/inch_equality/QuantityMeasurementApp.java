@@ -2,7 +2,7 @@ package inch_equality;
 
 public class QuantityMeasurementApp {
 
-    //FEET CLASS
+    // FEET CLASS
     public static class Feet {
 
         private final double value;
