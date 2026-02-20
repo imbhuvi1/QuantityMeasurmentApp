@@ -1,4 +1,4 @@
-package feet_equality;
+package inch_equality;
 
 
 public class QuantityMeasurementApp {

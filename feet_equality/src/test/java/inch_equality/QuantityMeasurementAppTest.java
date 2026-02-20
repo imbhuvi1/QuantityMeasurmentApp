@@ -1,7 +1,10 @@
-package feet_equality;
+package inch_equality;
 
 
 import org.junit.jupiter.api.Test;
+
+import inch_equality.QuantityMeasurementApp;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class QuantityMeasurementAppTest {
