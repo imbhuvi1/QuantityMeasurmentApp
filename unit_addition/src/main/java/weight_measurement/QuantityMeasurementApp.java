@@ -1,6 +1,6 @@
-package unit_addition;
+package weight_measurement;
 
-import unit_addition.Length;
+import weight_measurement.Length;
 
 public class QuantityMeasurementApp {
 	public static boolean demonstrateLengthEquality(Length length1, Length length2) {

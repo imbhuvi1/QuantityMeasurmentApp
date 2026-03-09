@@ -1,8 +1,9 @@
-package unit_addition;
+package weight_measurement;
 
 import org.junit.jupiter.api.Test;
 
-import unit_addition.Length;
+import weight_measurement.Length;
+import weight_measurement.QuantityMeasurementApp;
 
 import static org.junit.jupiter.api.Assertions.*;
 

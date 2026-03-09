@@ -1,4 +1,4 @@
-package unit_addition;
+package weight_measurement;
 
 public class Length {
 	private final double value;
