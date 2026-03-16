@@ -57,6 +57,6 @@ public class QuantityMeasurementApp {
 		demonstrateLengthConversion(1.0, Length.LengthUnit.FEET, Length.LengthUnit.INCHES);
 		Length lengthInYards = new Length(2.0, Length.LengthUnit.YARDS);
 		demonstrateLengthConversion(lengthInYards, Length.LengthUnit.FEET);
-		demonstrateLengthAddition(lengthInYards, new Length(3.0, LengthUnit.FEET));
+		demonstrateLengthAddition(lengthInYards, new Length(3.0, Length.LengthUnit.FEET));
 	}
 }
