@@ -1,32 +1,27 @@
 package unit_support;
 
-import java.util.Objects;
-
 public class QuantityLength {
 
     private final double value;
-    private final LengthUnit unit;
+    private final Unit unit;
 
-    public QuantityLength(double value, LengthUnit unit) {
-        if (unit == null)
-            throw new IllegalArgumentException("Unit cannot be null");
-
+    public QuantityLength(double value, Unit unit) {
         this.value = value;
         this.unit = unit;
-    }
-
-    private double toBaseUnit() {
-        return unit.toInches(value);
     }
 
     @Override
     public boolean equals(Object obj) {
 
         if (this == obj) return true;
+
         if (obj == null || getClass() != obj.getClass()) return false;
 
         QuantityLength other = (QuantityLength) obj;
 
-        return Double.compare(this.toBaseUnit(), other.toBaseUnit()) == 0;
+        double thisValue = this.unit.toBaseUnit(this.value);
+        double otherValue = other.unit.toBaseUnit(other.value);
+
+        return Double.compare(thisValue, otherValue) == 0;
     }
 }

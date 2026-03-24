@@ -1,19 +1,19 @@
 package unit_support;
 
-public enum LengthUnit {
+public enum Unit {
 
-    FEET(12.0),                 // 1 foot = 12 inches
-    INCHES(1.0),                // Base unit
-    YARDS(36.0),                // 1 yard = 36 inches
-    CENTIMETERS(0.393701);      // 1 cm = 0.393701 inches
+    FEET(1.0),
+    INCHES(1.0 / 12.0),
+    YARD(3.0),
+    CENTIMETER(0.0328);
 
-    private final double toInches;
+    private final double conversionFactor;
 
-    LengthUnit(double toInches) {
-        this.toInches = toInches;
+    Unit(double conversionFactor) {
+        this.conversionFactor = conversionFactor;
     }
 
-    public double toInches(double value) {
-        return value * toInches;
+    public double toBaseUnit(double value) {
+        return value * conversionFactor;
     }
 }
