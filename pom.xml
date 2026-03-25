@@ -4,12 +4,8 @@
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-
-    <!-- You can keep same groupId for all UCs -->
     <groupId>com.quantitymeasurement</groupId>
-
-    <!-- CHANGE THIS -->
-    <artifactId>inch-equality</artifactId>
+    <artifactId>quantity-measurement-app</artifactId>
 
     <version>1.0-SNAPSHOT</version>
 
