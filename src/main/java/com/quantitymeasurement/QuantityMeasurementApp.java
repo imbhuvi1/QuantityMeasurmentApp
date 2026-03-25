@@ -1,4 +1,4 @@
-package inch_equality;
+package com.quantitymeasurement;
 
 public class QuantityMeasurementApp {
 

@@ -1,6 +1,9 @@
-package inch_equality;
+package com.quantitymeasurement;
 
 import org.junit.jupiter.api.Test;
+
+import com.quantitymeasurement.Inches;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class InchesTest {
