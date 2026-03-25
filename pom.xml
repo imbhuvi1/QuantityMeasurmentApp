@@ -5,8 +5,8 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.quantity</groupId>
-    <artifactId>feet-equality</artifactId>
+    <groupId>com.quantitymeasurement</groupId>
+    <artifactId>quantity-measurement-app</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>

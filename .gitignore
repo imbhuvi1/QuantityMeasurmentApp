@@ -19,6 +19,7 @@ out/
 .classpath
 .settings/
 bin/
+target/
 
 # ===============================
 # VS Code
@@ -35,3 +36,4 @@ Thumbs.db
 # Logs
 # ===============================
 *.log
+/target/

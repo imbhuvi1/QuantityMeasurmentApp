@@ -1,4 +1,4 @@
-package feet_equality;
+package com.quantitymeasurement;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
