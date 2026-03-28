@@ -18,6 +18,7 @@ out/
 .project
 .classpath
 .settings/
+.git/
 bin/
 target/
 
