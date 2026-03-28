@@ -1,43 +1,62 @@
 package com.quantitymeasurement.controller;
 
-import com.quantitymeasurement.entity.QuantityDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.quantitymeasurement.model.QuantityDTO;
+import com.quantitymeasurement.request.CompareRequest;
 import com.quantitymeasurement.service.IQuantityMeasurementService;
 
+import jakarta.validation.Valid;
+
+@RestController
+@RequestMapping("/quantity")
 public class QuantityMeasurementController {
 
-	private IQuantityMeasurementService quantityMeasurementService;
+	private static final Logger logger = LoggerFactory.getLogger(QuantityMeasurementController.class);
+
+	private final IQuantityMeasurementService quantityMeasurementService;
 
 	public QuantityMeasurementController(IQuantityMeasurementService quantityMeasurementService) {
 		this.quantityMeasurementService = quantityMeasurementService;
+		logger.info("Quantity Measurement Controller initialized");
 	}
 
-	public boolean performComparison(QuantityDTO thisQuantityDTO, QuantityDTO thatQuantityDTO) {
-		return quantityMeasurementService.compare(thisQuantityDTO, thatQuantityDTO);
+	@PostMapping("/compare")
+	public ResponseEntity<Boolean> performComparison(@RequestBody CompareRequest request) {
+		logger.info("Comparing quantities");
+		boolean result = quantityMeasurementService.compare(request.getThisQuantity(), request.getThatQuantity());
+		return ResponseEntity.ok(result);
 	}
 
-	public QuantityDTO performConversion(QuantityDTO thisQuantityDTO, String targetUnit) {
-		return quantityMeasurementService.convert(thisQuantityDTO, targetUnit);
+	@PostMapping("/convert")
+	public ResponseEntity<QuantityDTO> performConversion(@Valid @RequestBody QuantityDTO quantityDTO,
+			@RequestParam String targetUnit) {
+		logger.info("Converting quantity to {}", targetUnit);
+		QuantityDTO result = quantityMeasurementService.convert(quantityDTO, targetUnit);
+		return ResponseEntity.ok(result);
 	}
 
-	public QuantityDTO performAddition(QuantityDTO thisQuantityDTO, QuantityDTO thatQuantityDTO) {
-		return quantityMeasurementService.add(thisQuantityDTO, thatQuantityDTO);
+	@PostMapping("/add")
+	public ResponseEntity<QuantityDTO> performAddition(@RequestBody CompareRequest request) {
+		logger.info("Adding quantities");
+		QuantityDTO result = quantityMeasurementService.add(request.getThisQuantity(), request.getThatQuantity());
+		return ResponseEntity.ok(result);
 	}
 
-	public QuantityDTO performAddition(QuantityDTO thisQuantityDTO, QuantityDTO thatQuantityDTO,
-			QuantityDTO targetUnitDTO) {
-		return quantityMeasurementService.add(thisQuantityDTO, thatQuantityDTO, targetUnitDTO);
+	@PostMapping("/subtract")
+	public ResponseEntity<QuantityDTO> performSubtraction(@RequestBody CompareRequest request) {
+		logger.info("Subtracting quantities");
+		QuantityDTO result = quantityMeasurementService.subtract(request.getThisQuantity(), request.getThatQuantity());
+		return ResponseEntity.ok(result);
 	}
 
-	public QuantityDTO performSubtraction(QuantityDTO thisQuantityDTO, QuantityDTO thatQuantityDTO) {
-		return quantityMeasurementService.subtract(thisQuantityDTO, thatQuantityDTO);
-	}
-
-	public QuantityDTO performSubtraction(QuantityDTO thisQuantityDTO, QuantityDTO thatQuantityDTO,
-			QuantityDTO targetUnitDTO) {
-		return quantityMeasurementService.subtract(thisQuantityDTO, thatQuantityDTO, targetUnitDTO);
-	}
-
-	public double performDivision(QuantityDTO thisQuantityDTO, QuantityDTO thatQuantityDTO) {
-		return quantityMeasurementService.divide(thisQuantityDTO, thatQuantityDTO);
+	@PostMapping("/divide")
+	public ResponseEntity<Double> performDivision(@RequestBody CompareRequest request) {
+		logger.info("Dividing quantities");
+		double result = quantityMeasurementService.divide(request.getThisQuantity(), request.getThatQuantity());
+		return ResponseEntity.ok(result);
 	}
 }

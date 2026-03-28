@@ -1,6 +1,6 @@
 package com.quantitymeasurement.service;
 
-import com.quantitymeasurement.entity.QuantityDTO;
+import com.quantitymeasurement.model.QuantityDTO;
 
 public interface IQuantityMeasurementService {
 	public boolean compare(QuantityDTO thisQuantityDTO, QuantityDTO thatQuantityDTO);

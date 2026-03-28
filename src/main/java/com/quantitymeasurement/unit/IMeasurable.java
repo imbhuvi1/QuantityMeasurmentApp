@@ -1,4 +1,3 @@
-
 package com.quantitymeasurement.unit;
 
 @FunctionalInterface
