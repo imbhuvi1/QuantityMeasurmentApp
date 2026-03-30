@@ -15,8 +15,11 @@ target/
 
 ### Eclipse ###
 .classpath
-/.settings
+.settings
+.project
 /target
+
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
