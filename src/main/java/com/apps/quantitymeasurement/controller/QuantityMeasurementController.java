@@ -98,4 +98,18 @@ public class QuantityMeasurementController {
         return ResponseEntity.ok(ApiResponse.ok("Record deleted successfully"));
     }
 
+    // 13. Delete selected by ids
+    @DeleteMapping("/deleteByIds")
+    public ResponseEntity<ApiResponse<String>> deleteByIds(@RequestBody List<Long> ids) {
+        service.deleteAllByIds(ids);
+        return ResponseEntity.ok(ApiResponse.ok("Selected records deleted successfully"));
+    }
+
+    // 14. Delete all history
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<ApiResponse<String>> deleteAll() {
+        service.deleteAllHistory();
+        return ResponseEntity.ok(ApiResponse.ok("All history deleted successfully"));
+    }
+
 }

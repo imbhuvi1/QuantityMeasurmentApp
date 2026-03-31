@@ -217,10 +217,18 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
     }
 
     @Override
-
     public void deleteById(Long id) {
         repository.deleteById(id);
-        System.out.println("Operation with id "+id+" deleted");
+    }
+
+    @Override
+    public void deleteAllByIds(List<Long> ids) {
+        repository.deleteAllById(ids);
+    }
+
+    @Override
+    public void deleteAllHistory() {
+        repository.deleteAll();
     }
 
 
