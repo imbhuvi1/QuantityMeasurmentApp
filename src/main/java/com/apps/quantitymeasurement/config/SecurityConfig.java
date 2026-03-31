@@ -45,6 +45,7 @@ public class SecurityConfig {
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             //.oauth2Login(oauth2 -> oauth2.successHandler(oAuth2SuccessHandler)) // Enable when Google credentials are set
+            .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2SuccessHandler))
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
