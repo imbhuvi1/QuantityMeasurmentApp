@@ -13,13 +13,6 @@ target/
 .springBeans
 .sts4-cache
 
-### Eclipse ###
-.classpath
-.settings
-.project
-/target
-
-
 ### IntelliJ IDEA ###
 .idea
 *.iws
@@ -38,4 +31,3 @@ build/
 
 ### VS Code ###
 .vscode/
-/bin/
