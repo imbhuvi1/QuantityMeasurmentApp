@@ -39,3 +39,6 @@ build/
 ### VS Code ###
 .vscode/
 /bin/
+
+### Environment Variables ###
+.env
