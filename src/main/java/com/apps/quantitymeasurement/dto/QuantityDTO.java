@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuantityDTO {
-    public double value;
-    public String unit;
-    public String measurementType;
+    private double value;
+    private String unit;
+    private String measurementType;
 }

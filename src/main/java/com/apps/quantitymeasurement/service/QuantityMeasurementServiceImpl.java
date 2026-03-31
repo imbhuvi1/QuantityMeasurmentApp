@@ -38,35 +38,32 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
         if (!thisQuantity.getUnit().getMeasurementType().equals(thatQuantity.getUnit().getMeasurementType())) {
             throw new QuantityMeasurementException("Cannot compare different measurement types");
         }
-        double baseValue1 = thisQuantity.getValue() * thisQuantity.getUnit().getConversionFactor();
-        double baseValue2 = thatQuantity.getValue() * thatQuantity.getUnit().getConversionFactor();
+        double baseValue1, baseValue2;
+        if (thisQuantity.getUnit() instanceof TemperatureUnit) {
+            baseValue1 = ((TemperatureUnit) thisQuantity.getUnit()).convertToBaseUnit(thisQuantity.getValue());
+            baseValue2 = ((TemperatureUnit) thatQuantity.getUnit()).convertToBaseUnit(thatQuantity.getValue());
+        } else {
+            baseValue1 = thisQuantity.getValue() * thisQuantity.getUnit().getConversionFactor();
+            baseValue2 = thatQuantity.getValue() * thatQuantity.getUnit().getConversionFactor();
+        }
         return Math.abs(baseValue1 - baseValue2) < 0.0001;
-
     }
 
     @Override
     public QuantityDTO convert(QuantityDTO thisQuantityDTO, QuantityDTO thatQuantityDTO) throws QuantityMeasurementException {
-        try {
-            QuantityModel<?> source = getQuantityModel(thisQuantityDTO);
-            QuantityModel<?> target = getQuantityModel(thatQuantityDTO);
-            if (!source.getUnit().getMeasurementType().equals(target.getUnit().getMeasurementType())) {
-                throw new QuantityMeasurementException("Cannot convert between different measurement types");
-            }
-            if(source.getUnit().getClass().equals(TemperatureUnit.class)){
-                return convertTo(source,target);
-            }
-            else {
-                double baseValue = source.getValue() * source.getUnit().getConversionFactor();
-                double convertedValue = baseValue / target.getUnit().getConversionFactor();
-                QuantityModel<?> resultModel = new QuantityModel<>(convertedValue, target.getUnit());
-                QuantityMeasurementEntity entity = new QuantityMeasurementEntity(source, "CONVERT", resultModel);
-                repository.save(entity);
-                return new QuantityDTO(convertedValue, target.getUnit().getUnitName(), target.getUnit().getMeasurementType());
-            }
-
-        } catch (QuantityMeasurementException e) {
-            throw new QuantityMeasurementException("Exception Occurred");
+        QuantityModel<?> source = getQuantityModel(thisQuantityDTO);
+        QuantityModel<?> target = getQuantityModel(thatQuantityDTO);
+        if (!source.getUnit().getMeasurementType().equals(target.getUnit().getMeasurementType())) {
+            throw new QuantityMeasurementException("Cannot convert between different measurement types");
         }
+        if (source.getUnit() instanceof TemperatureUnit) {
+            return convertTo(source, target);
+        }
+        double baseValue = source.getValue() * source.getUnit().getConversionFactor();
+        double convertedValue = baseValue / target.getUnit().getConversionFactor();
+        QuantityModel<?> resultModel = new QuantityModel<>(convertedValue, target.getUnit());
+        repository.save(new QuantityMeasurementEntity(source, "CONVERT", resultModel));
+        return new QuantityDTO(convertedValue, target.getUnit().getUnitName(), target.getUnit().getMeasurementType());
     }
 
     public QuantityDTO convertTo(QuantityModel<?> thisQuantityModel , QuantityModel<?> thatQuantityModel){
@@ -122,7 +119,7 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
         QuantityModel<?> q1 = getQuantityModel(thisQuantityDTO);
         QuantityModel<?> q2 = getQuantityModel(thatQuantityDTO);
         if (!q1.getUnit().getMeasurementType().equals(q2.getUnit().getMeasurementType())) {
-            throw new QuantityMeasurementException("Cannot add different measurement types");
+            throw new QuantityMeasurementException("Cannot subtract different measurement types");
         }
 
         double baseValue1 = q1.getValue() * q1.getUnit().getConversionFactor();
@@ -142,7 +139,7 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
         QuantityModel<?> target = getQuantityModel(targetUnitDTO);
 
         if (!q1.getUnit().getMeasurementType().equals(q2.getUnit().getMeasurementType())) {
-            throw new QuantityMeasurementException("Cannot add different measurement types");
+            throw new QuantityMeasurementException("Cannot subtract different measurement types");
         }
 
         double base1 = q1.getValue() * q1.getUnit().getConversionFactor();
@@ -212,10 +209,18 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
     }
 
     @Override
-
     public void deleteById(Long id) {
         repository.deleteById(id);
-        System.out.println("Operation with id "+id+" deleted");
+    }
+
+    @Override
+    public void deleteAllByIds(List<Long> ids) {
+        repository.deleteAllById(ids);
+    }
+
+    @Override
+    public void deleteAllHistory() {
+        repository.deleteAll();
     }
 
 
