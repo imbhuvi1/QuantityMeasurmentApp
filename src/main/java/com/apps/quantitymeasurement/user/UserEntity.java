@@ -21,6 +21,10 @@ public class UserEntity {
 
     private String password;
 
+    private String phone;
+
+    private String bio;
+
     @Enumerated(EnumType.STRING)
     private AuthProvider provider;
 
