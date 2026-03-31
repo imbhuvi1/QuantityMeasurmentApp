@@ -51,27 +51,19 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 
     @Override
     public QuantityDTO convert(QuantityDTO thisQuantityDTO, QuantityDTO thatQuantityDTO) throws QuantityMeasurementException {
-        try {
-            QuantityModel<?> source = getQuantityModel(thisQuantityDTO);
-            QuantityModel<?> target = getQuantityModel(thatQuantityDTO);
-            if (!source.getUnit().getMeasurementType().equals(target.getUnit().getMeasurementType())) {
-                throw new QuantityMeasurementException("Cannot convert between different measurement types");
-            }
-            if(source.getUnit().getClass().equals(TemperatureUnit.class)){
-                return convertTo(source,target);
-            }
-            else {
-                double baseValue = source.getValue() * source.getUnit().getConversionFactor();
-                double convertedValue = baseValue / target.getUnit().getConversionFactor();
-                QuantityModel<?> resultModel = new QuantityModel<>(convertedValue, target.getUnit());
-                QuantityMeasurementEntity entity = new QuantityMeasurementEntity(source, "CONVERT", resultModel);
-                repository.save(entity);
-                return new QuantityDTO(convertedValue, target.getUnit().getUnitName(), target.getUnit().getMeasurementType());
-            }
-
-        } catch (QuantityMeasurementException e) {
-            throw e;
+        QuantityModel<?> source = getQuantityModel(thisQuantityDTO);
+        QuantityModel<?> target = getQuantityModel(thatQuantityDTO);
+        if (!source.getUnit().getMeasurementType().equals(target.getUnit().getMeasurementType())) {
+            throw new QuantityMeasurementException("Cannot convert between different measurement types");
         }
+        if (source.getUnit() instanceof TemperatureUnit) {
+            return convertTo(source, target);
+        }
+        double baseValue = source.getValue() * source.getUnit().getConversionFactor();
+        double convertedValue = baseValue / target.getUnit().getConversionFactor();
+        QuantityModel<?> resultModel = new QuantityModel<>(convertedValue, target.getUnit());
+        repository.save(new QuantityMeasurementEntity(source, "CONVERT", resultModel));
+        return new QuantityDTO(convertedValue, target.getUnit().getUnitName(), target.getUnit().getMeasurementType());
     }
 
     public QuantityDTO convertTo(QuantityModel<?> thisQuantityModel , QuantityModel<?> thatQuantityModel){
