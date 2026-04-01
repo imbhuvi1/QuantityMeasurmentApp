@@ -28,8 +28,17 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private AuthProvider provider;
 
+    // Role field - USER or ADMIN
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role = Role.USER; // Default to USER
+
     public enum AuthProvider {
         LOCAL, GOOGLE
+    }
+
+    public enum Role {
+        USER, ADMIN
     }
 
     public UserEntity(String email, String name, String password, AuthProvider provider) {
@@ -37,5 +46,11 @@ public class UserEntity {
         this.name = name;
         this.password = password;
         this.provider = provider;
+        this.role = Role.USER; // Default role
+    }
+
+    // Helper method to check if user is admin
+    public boolean isAdmin() {
+        return this.role == Role.ADMIN;
     }
 }
