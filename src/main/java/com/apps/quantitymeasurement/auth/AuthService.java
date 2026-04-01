@@ -36,9 +36,13 @@ public class AuthService {
                 passwordEncoder.encode(request.getPassword()),
                 UserEntity.AuthProvider.LOCAL
         );
+        
+        // Set role from request
+        user.setRole(request.getRoleEnum());
+        
         userService.save(user);
         String token = jwtUtil.generateToken(user.getEmail());
-        return new AuthResponse(token, user.getEmail(), user.getName());
+        return new AuthResponse(token, user.getEmail(), user.getName(), user.getRole().toString());
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -47,6 +51,6 @@ public class AuthService {
         );
         UserEntity user = userService.findByEmail(request.getEmail());
         String token = jwtUtil.generateToken(user.getEmail());
-        return new AuthResponse(token, user.getEmail(), user.getName());
+        return new AuthResponse(token, user.getEmail(), user.getName(), user.getRole().toString());
     }
 }
