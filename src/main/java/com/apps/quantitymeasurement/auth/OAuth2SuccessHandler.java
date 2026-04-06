@@ -36,7 +36,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String token = jwtUtil.generateToken(email);
         String userName = userService.findByEmail(email).getName();
-        String redirectUrl = "http://localhost:5500/dashboard.html?token=" + token + "&name=" + java.net.URLEncoder.encode(userName, "UTF-8") + "&email=" + java.net.URLEncoder.encode(email, "UTF-8");
+        String redirectUrl = "http://localhost:5500/index.html?token=" + token + "&name=" + java.net.URLEncoder.encode(userName, "UTF-8") + "&email=" + java.net.URLEncoder.encode(email, "UTF-8");
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }
 }
