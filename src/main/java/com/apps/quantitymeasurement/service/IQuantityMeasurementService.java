@@ -14,7 +14,7 @@ public interface IQuantityMeasurementService {
     public QuantityDTO subtract(QuantityDTO thisQuantityDTO , QuantityDTO thatQuantityDTO) throws QuantityMeasurementException;
     public QuantityDTO subtract(QuantityDTO thisQuantityDTO , QuantityDTO thatQuantityDTO , QuantityDTO targetUnitDTO) throws QuantityMeasurementException;
     public double divide(QuantityDTO thisQuantityDTO , QuantityDTO thatQuantityDTO) throws QuantityMeasurementException;
-    List<QuantityMeasurementEntity> getHistory();
+    List<QuantityMeasurementEntity> getHistory() throws QuantityMeasurementException;
     void deleteById(Long id);
-    void deleteAllHistory();
+    void deleteAllHistory() throws QuantityMeasurementException;
 }

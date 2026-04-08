@@ -6,7 +6,12 @@ import com.apps.quantitymeasurement.exception.QuantityMeasurementException;
 import com.apps.quantitymeasurement.model.QuantityModel;
 import com.apps.quantitymeasurement.repository.QuantityMeasurementRepository;
 import com.apps.quantitymeasurement.unit.*;
+import com.apps.quantitymeasurement.user.UserEntity;
+import com.apps.quantitymeasurement.user.UserRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,17 +19,31 @@ import java.util.List;
 @Service
 public class QuantityMeasurementServiceImpl implements IQuantityMeasurementService{
     private final QuantityMeasurementRepository repository;
+    private final UserRepository userRepository;
 
-    public QuantityMeasurementServiceImpl(QuantityMeasurementRepository repository){
+    public QuantityMeasurementServiceImpl(QuantityMeasurementRepository repository, UserRepository userRepository){
         this.repository = repository;
+        this.userRepository = userRepository;
+    }
+
+    private UserEntity getCurrentUser() throws QuantityMeasurementException {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            throw new QuantityMeasurementException("User not authenticated");
+        }
+        String email = auth.getName();
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new QuantityMeasurementException("User not found"));
     }
 
     public boolean compare(QuantityDTO thisQuantityDTO , QuantityDTO thatQuantityDTO) throws QuantityMeasurementException {
+        UserEntity currentUser = getCurrentUser();
         QuantityModel<?> thisQuantityModel = getQuantityModel(thisQuantityDTO);
         QuantityModel<?> thatQuantityModel = getQuantityModel(thatQuantityDTO);
         boolean comparisonResult = compare(thisQuantityModel,thatQuantityModel);
         String resultString = comparisonResult ? "True" : "False";
         QuantityMeasurementEntity entity = new QuantityMeasurementEntity(thisQuantityModel,thatQuantityModel,"COMPARE",resultString);
+        entity.setUser(currentUser);
         repository.save(entity);
         return comparisonResult;
     }
@@ -46,33 +65,38 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
 
     @Override
     public QuantityDTO convert(QuantityDTO thisQuantityDTO, QuantityDTO thatQuantityDTO) throws QuantityMeasurementException {
+        UserEntity currentUser = getCurrentUser();
         QuantityModel<?> source = getQuantityModel(thisQuantityDTO);
         QuantityModel<?> target = getQuantityModel(thatQuantityDTO);
         if (!source.getUnit().getMeasurementType().equals(target.getUnit().getMeasurementType())) {
             throw new QuantityMeasurementException("Cannot convert between different measurement types");
         }
         if (source.getUnit() instanceof TemperatureUnit) {
-            return convertTo(source, target);
+            return convertTo(source, target, currentUser);
         }
         double baseValue = source.getValue() * source.getUnit().getConversionFactor();
         double convertedValue = baseValue / target.getUnit().getConversionFactor();
         QuantityModel<?> resultModel = new QuantityModel<>(convertedValue, target.getUnit());
-        repository.save(new QuantityMeasurementEntity(source, "CONVERT", resultModel));
+        QuantityMeasurementEntity entity = new QuantityMeasurementEntity(source, "CONVERT", resultModel);
+        entity.setUser(currentUser);
+        repository.save(entity);
         return new QuantityDTO(convertedValue, target.getUnit().getUnitName(), target.getUnit().getMeasurementType());
     }
 
-    public QuantityDTO convertTo(QuantityModel<?> thisQuantityModel , QuantityModel<?> thatQuantityModel){
+    public QuantityDTO convertTo(QuantityModel<?> thisQuantityModel , QuantityModel<?> thatQuantityModel, UserEntity currentUser){
         TemperatureUnit thisUnit = (TemperatureUnit) thisQuantityModel.getUnit();
         TemperatureUnit thatUnit = (TemperatureUnit) thatQuantityModel.getUnit();
         double newValue = thisUnit.convertTo(thisQuantityModel.getValue(),thatUnit);
         QuantityModel<TemperatureUnit> resultModel = new QuantityModel<>(newValue,thatUnit);
         QuantityMeasurementEntity entity = new QuantityMeasurementEntity(thisQuantityModel,"CONVERT",resultModel);
+        entity.setUser(currentUser);
         repository.save(entity);
         return new QuantityDTO(newValue,thatUnit.getUnitName(),thatUnit.getMeasurementType());
     }
 
     @Override
     public QuantityDTO add(QuantityDTO thisQuantityDTO, QuantityDTO thatQuantityDTO) throws QuantityMeasurementException {
+        UserEntity currentUser = getCurrentUser();
         QuantityModel<?> q1 = getQuantityModel(thisQuantityDTO);
         QuantityModel<?> q2 = getQuantityModel(thatQuantityDTO);
         if (!q1.getUnit().getMeasurementType().equals(q2.getUnit().getMeasurementType())) {
@@ -85,12 +109,14 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
         double resultValue = resultBase / q1.getUnit().getConversionFactor();
         QuantityModel<?> resultModel = new QuantityModel<>(resultValue, q1.getUnit());
         QuantityMeasurementEntity entity = new QuantityMeasurementEntity(q1, q2, "ADD", resultModel);
+        entity.setUser(currentUser);
         repository.save(entity);
         return new QuantityDTO(resultValue, q1.getUnit().getUnitName(), q1.getUnit().getMeasurementType());
     }
 
     @Override
     public QuantityDTO add(QuantityDTO thisQuantityDTO, QuantityDTO thatQuantityDTO, QuantityDTO targetUnitDTO) throws QuantityMeasurementException {
+        UserEntity currentUser = getCurrentUser();
         QuantityModel<?> q1 = getQuantityModel(thisQuantityDTO);
         QuantityModel<?> q2 = getQuantityModel(thatQuantityDTO);
         QuantityModel<?> target = getQuantityModel(targetUnitDTO);
@@ -105,12 +131,14 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
         double converted = resultBase / target.getUnit().getConversionFactor();
         QuantityModel<?> resultModel = new QuantityModel<>(converted, target.getUnit());
         QuantityMeasurementEntity entity = new QuantityMeasurementEntity(q1, q2, "ADD", resultModel);
+        entity.setUser(currentUser);
         repository.save(entity);
         return new QuantityDTO(converted, target.getUnit().getUnitName(), target.getUnit().getMeasurementType());
     }
 
     @Override
     public QuantityDTO subtract(QuantityDTO thisQuantityDTO, QuantityDTO thatQuantityDTO) throws QuantityMeasurementException {
+        UserEntity currentUser = getCurrentUser();
         QuantityModel<?> q1 = getQuantityModel(thisQuantityDTO);
         QuantityModel<?> q2 = getQuantityModel(thatQuantityDTO);
         if (!q1.getUnit().getMeasurementType().equals(q2.getUnit().getMeasurementType())) {
@@ -123,12 +151,14 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
         double resultValue = resultBase / q1.getUnit().getConversionFactor();
         QuantityModel<?> resultModel = new QuantityModel<>(resultValue, q1.getUnit());
         QuantityMeasurementEntity entity = new QuantityMeasurementEntity(q1, q2, "SUBTRACT", resultModel);
+        entity.setUser(currentUser);
         repository.save(entity);
         return new QuantityDTO(resultValue, q1.getUnit().getUnitName(), q1.getUnit().getMeasurementType());
     }
 
     @Override
     public QuantityDTO subtract(QuantityDTO thisQuantityDTO, QuantityDTO thatQuantityDTO, QuantityDTO targetUnitDTO) throws QuantityMeasurementException {
+        UserEntity currentUser = getCurrentUser();
         QuantityModel<?> q1 = getQuantityModel(thisQuantityDTO);
         QuantityModel<?> q2 = getQuantityModel(thatQuantityDTO);
         QuantityModel<?> target = getQuantityModel(targetUnitDTO);
@@ -143,12 +173,14 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
         double converted = resultBase / target.getUnit().getConversionFactor();
         QuantityModel<?> resultModel = new QuantityModel<>(converted, target.getUnit());
         QuantityMeasurementEntity entity = new QuantityMeasurementEntity(q1, q2, "SUBTRACT", resultModel);
+        entity.setUser(currentUser);
         repository.save(entity);
         return new QuantityDTO(converted, target.getUnit().getUnitName(), target.getUnit().getMeasurementType());
     }
 
     @Override
     public double divide(QuantityDTO thisQuantityDTO, QuantityDTO thatQuantityDTO) throws QuantityMeasurementException {
+        UserEntity currentUser = getCurrentUser();
         QuantityModel<?> q1 = getQuantityModel(thisQuantityDTO);
         QuantityModel<?> q2 = getQuantityModel(thatQuantityDTO);
         if (!q1.getUnit().getMeasurementType().equals(q2.getUnit().getMeasurementType())) {
@@ -164,13 +196,15 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
         double result = base1 / base2;
 
         QuantityMeasurementEntity entity = new QuantityMeasurementEntity(q1, q2, "DIVIDE", String.valueOf(result));
+        entity.setUser(currentUser);
         repository.save(entity);
         return result;
     }
 
     @Override
-    public List<QuantityMeasurementEntity> getHistory() {
-        return repository.findAll();
+    public List<QuantityMeasurementEntity> getHistory() throws QuantityMeasurementException {
+        UserEntity currentUser = getCurrentUser();
+        return repository.findAllByUserOrderByIdDesc(currentUser);
     }
 
     @Override
@@ -179,8 +213,10 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
     }
 
     @Override
-    public void deleteAllHistory() {
-        repository.deleteAll();
+    @Transactional
+    public void deleteAllHistory() throws QuantityMeasurementException {
+        UserEntity currentUser = getCurrentUser();
+        repository.deleteAllByUser(currentUser);
     }
 
 

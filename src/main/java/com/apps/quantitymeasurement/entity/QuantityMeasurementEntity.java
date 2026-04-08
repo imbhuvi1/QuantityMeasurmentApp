@@ -1,6 +1,7 @@
 package com.apps.quantitymeasurement.entity;
 
 import com.apps.quantitymeasurement.model.QuantityModel;
+import com.apps.quantitymeasurement.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +13,8 @@ import java.time.LocalDateTime;
 @Table(name = "quantity_measurement_entity", indexes = {
         @Index(name = "idx_operation", columnList = "operation"),
         @Index(name = "idx_measurement_type", columnList = "this_measurement_type"),
-        @Index(name = "idx_created_at", columnList = "created_at")
+        @Index(name = "idx_created_at", columnList = "created_at"),
+        @Index(name = "idx_user_id", columnList = "user_id")
         })
 @Data   // -> Automatically Creates Getter , Setter , toString() , equals() , hashCode() and we can also use @Getter and @Setter Annotation for each field
 @NoArgsConstructor
@@ -22,6 +24,10 @@ public class QuantityMeasurementEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
 
     @Column(name = "this_value", nullable = false)
     private double thisValue;

@@ -94,7 +94,7 @@ public class QuantityMeasurementController {
 
     // 6. Get History
     @GetMapping("/getHistory")
-    public ResponseEntity<ApiResponse<List<QuantityMeasurementEntity>>> getHistory() {
+    public ResponseEntity<ApiResponse<List<QuantityMeasurementEntity>>> getHistory() throws QuantityMeasurementException {
         return ResponseEntity.ok(ApiResponse.ok(service.getHistory()));
     }
 
@@ -107,7 +107,7 @@ public class QuantityMeasurementController {
 
     // 8. Delete all history
     @DeleteMapping("/deleteAll")
-    public ResponseEntity<ApiResponse<String>> deleteAll() {
+    public ResponseEntity<ApiResponse<String>> deleteAll() throws QuantityMeasurementException {
         service.deleteAllHistory();
         return ResponseEntity.ok(ApiResponse.ok("All history deleted successfully"));
     }
