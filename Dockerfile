@@ -13,7 +13,6 @@ RUN mvn dependency:go-offline -B
 
 # Copy source code with proper Maven structure
 COPY src/main ./src/main
-COPY src/test ./src/test
 
 # Build the application (skip tests for faster build)
 RUN mvn clean package -DskipTests
