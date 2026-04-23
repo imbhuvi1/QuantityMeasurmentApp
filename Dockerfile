@@ -1,6 +1,6 @@
 # Multi-stage Docker build for QuantityMeasurementApp
 # Stage 1: Build the application
-FROM maven:3.9.4-openjdk-17-slim AS build
+FROM maven:3.9.4-eclipse-temurin-17 AS build
 
 # Set working directory
 WORKDIR /app
@@ -19,7 +19,7 @@ COPY src/test ./src/test
 RUN mvn clean package -DskipTests
 
 # Stage 2: Runtime image
-FROM openjdk:17-jre-slim
+FROM eclipse-temurin:17-jre
 
 # Set working directory
 WORKDIR /app
