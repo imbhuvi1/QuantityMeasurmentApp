@@ -6,12 +6,14 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 
-@Configuration
+// Removed manual DataSource config to allow Spring Boot's auto-configuration
+// to correctly map spring.datasource.url to Hikari's jdbcUrl.
+// @Configuration
 public class DatabaseConfig {
 
-    @Bean
-    @ConfigurationProperties(prefix = "spring.datasource")
-    public DataSource dataSource() {
-        return DataSourceBuilder.create().build();
-    }
+    // @Bean
+    // @ConfigurationProperties(prefix = "spring.datasource")
+    // public DataSource dataSource() {
+    //     return DataSourceBuilder.create().build();
+    // }
 }
