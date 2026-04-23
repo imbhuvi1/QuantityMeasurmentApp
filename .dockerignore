@@ -1,0 +1,56 @@
+# Ignore build artifacts
+target/
+bin/
+!target/*.jar
+
+# Ignore IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore version control
+.git/
+.gitignore
+
+# Ignore logs
+*.log
+logs/
+
+# Ignore temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Ignore documentation
+README.md
+BACKEND_DOCUMENTATION.md
+*.md
+
+# Ignore Docker files themselves
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Ignore environment files
+.env
+.env.local
+.env.production
+
+# Ignore test files
+src/test/
+
+# Ignore Maven wrapper (optional, uncomment if not needed)
+# .mvn/
+# mvnw
+# mvnw.cmd

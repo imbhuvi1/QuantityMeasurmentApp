@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # Spring Boot Application with Supabase PostgreSQL
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: qma-app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      # Supabase PostgreSQL Configuration
+      SPRING_DATASOURCE_URL: jdbc:postgresql://aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres
+      SPRING_DATASOURCE_USERNAME: postgres.jwmezlerhbqelxdfnxfb
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      
+      # JPA configuration
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+      
+      # JWT configuration
+      JWT_SECRET: ${JWT_SECRET:-mySecretKey123456789012345678901234567890}
+      JWT_EXPIRATION: 86400000
+      
+      # OAuth2 configuration
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-866126800297-hohmm42b2m7l9k3ai4nmtpogr4hpd9pf.apps.googleusercontent.com}
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-your-google-client-secret-here}
+      
+      # Application configuration
+      SPRING_APPLICATION_NAME: QuantityMeasurementApplication
+      SERVER_PORT: 8080
+      
+      # Logging
+      LOGGING_LEVEL_COM_APPS_QUANTITYMEASUREMENT: DEBUG
+      
+    networks:
+      - qma-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+networks:
+  qma-network:
+    driver: bridge
